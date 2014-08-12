@@ -3,18 +3,80 @@
 
 ## Loading and preprocessing the data
 
-
+First we unzip, load and transform the data:
+* Steps are numbers
+* dates are factors
+* intervals are also factors, but converted to numeric first for sorting purposes
+```{r loadAndPreprocess,echo=T,results="hide"}
+unzip("activity.zip")
+data <- read.csv("activity.csv",colClasses="character",na.strings = "NA")
+data <- transform(data,date=factor(date),steps=as.numeric(steps),interval=factor(as.numeric(interval)))
+```
 
 ## What is mean total number of steps taken per day?
 
+Add steps for each day, ignoring NAs.
+```{r dailyTotal,results="hide"}
+dailysteps <- tapply(data$steps,data$date,sum,na.rm=T)
+```
+A histogram of these values:
+```{r dailyTotalHistogram}
+hist(dailysteps,col="blue3")
+```  
 
+The mean of the daily totals:
+```{r dailyTotalMean}
+mean(dailysteps)
+```
+The median of the daily totals:
+```{r dailyTotalMedian}
+median(dailysteps)
+```
 
 ## What is the average daily activity pattern?
 
+Take the mean of the steps for a given 5 minute interval:
+```{r intervalmean}
+intervalmean <- tapply(data$steps,data$interval,mean,na.rm=T)
+```
+Plot time of day against number of steps:
+```{r intervalmeanPlot}
+plot(names(intervalmean),intervalmean,type="l",col="red2",xlab="Interval", ylab="Average Steps")
+```  
 
+Interval containing the maximum mean number of steps, along with that mean reading:
+```{r maxMean}
+mmeanInt <- names(which.max(intervalmean))
+paste(mmeanInt,":",intervalmean[[mmeanInt]])
+```
 
 ## Imputing missing values
 
+I've decided to replace missing values for a given interval with the median
+for that interval.
 
+```{r missingvals}
+intervalmedian <- tapply(data$steps,data$interval,median,na.rm=T)
+steps2 <- mapply(function(a,b) if (!is.na(a)) { a } else { intervalmedian[[b]] },data$steps, data$interval)
+data2 <- data.frame(steps=steps2,date=data$date,interval=data$interval)
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+Add a "weekday" column to my new frame with filled in data:
+```{r weekdayColumn}
+data2[["weekday"]] <- factor(sapply(weekdays(as.Date(data$date)), function(x) if (x=="Saturday"|x=="Sunday") {"weekend"} else {"weekday"}))
+```  
+Create mean arrays for the weekend and weekday subsets:
+```{r intervalmean2}
+we <- subset(data2,weekday=="weekend")
+wd <- subset(data2,weekday=="weekday")
+intervalmeanwe <- tapply(we$steps,we$interval,mean,na.rm=T)
+intervalmeanwd <- tapply(wd$steps,wd$interval,mean,na.rm=T)
+```  
+Plots:
+```{r}
+par(mfrow=c(2,1))
+plot(names(intervalmeanwd),intervalmeanwd,type="l",col="green",main= "Weekdays", xlab="Interval", ylab="Average Steps")
+plot(names(intervalmeanwe),intervalmeanwe,type="l",col="green",main= "Weekends", xlab="Interval", ylab="Average Steps")
+```
