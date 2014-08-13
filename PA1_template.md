@@ -113,8 +113,8 @@ Plots:
 
 ```r
 par(mfrow=c(2,1))
-plot(names(intervalmeanwd),intervalmeanwd,type="l",col="green",main= "Weekdays", xlab="Interval", ylab="Average Steps")
-plot(names(intervalmeanwe),intervalmeanwe,type="l",col="green",main= "Weekends", xlab="Interval", ylab="Average Steps")
+plot(names(intervalmeanwd),intervalmeanwd,type="l",col="green",main= "Weekdays", xlab="Interval", ylab="Average Steps", ylim=c(0,210))
+plot(names(intervalmeanwe),intervalmeanwe,type="l",col="green",main= "Weekends", xlab="Interval", ylab="Average Steps", ylim=c(0,210))
 ```
 
 ![plot of chunk weekdayVsWeekend](figure/weekdayVsWeekend.png) 
