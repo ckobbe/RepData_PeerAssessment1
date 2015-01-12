@@ -1,4 +1,9 @@
-# Reproducible Research: Peer Assessment 1
+---
+title: "Reproducible Research: Peer Assessment 1"
+output: 
+  html_document:
+    keep_md: true
+---
 
 
 ## Loading and preprocessing the data
@@ -12,40 +17,42 @@ First we unzip, load and transform the data:
 unzip("activity.zip")
 data <- read.csv("activity.csv",colClasses="character",na.strings = "NA")
 data <- transform(data,date=factor(date),steps=as.numeric(steps),interval=factor(as.numeric(interval)))
+data_nona <- data[!is.na(data$steps),]
 ```
 
 ## What is mean total number of steps taken per day?
 
-Add steps for each day, ignoring NAs.
+Add steps for each day, stripping NAs.
 
 ```r
-dailysteps <- tapply(data$steps,data$date,sum,na.rm=T)
+dailysteps <- tapply(data_nona$steps,data_nona$date,sum)
+dailysteps_nona <- dailysteps[!is.na(dailysteps)]
 ```
 A histogram of these values:
 
 ```r
-hist(dailysteps,col="blue3",breaks=20)
+hist(dailysteps_nona,col="blue3",breaks=20)
 ```
 
-![plot of chunk dailyTotalHistogram](figure/dailyTotalHistogram.png) 
+![plot of chunk dailyTotalHistogram](figure/dailyTotalHistogram-1.png) 
 
 The mean of the daily totals:
 
 ```r
-mean(dailysteps)
+mean(dailysteps_nona)
 ```
 
 ```
-## [1] 9354
+## [1] 10766.19
 ```
 The median of the daily totals:
 
 ```r
-median(dailysteps)
+median(dailysteps_nona)
 ```
 
 ```
-## [1] 10395
+## [1] 10765
 ```
 
 ## What is the average daily activity pattern?
@@ -53,7 +60,7 @@ median(dailysteps)
 Take the mean of the steps for a given 5 minute interval:
 
 ```r
-intervalmean <- tapply(data$steps,data$interval,mean,na.rm=T)
+intervalmean <- tapply(data_nona$steps,data_nona$interval,mean)
 ```
 Plot time of day against number of steps:
 
@@ -61,7 +68,7 @@ Plot time of day against number of steps:
 plot(names(intervalmean),intervalmean,type="l",col="red2",xlab="Interval", ylab="Average Steps")
 ```
 
-![plot of chunk intervalmeanPlot](figure/intervalmeanPlot.png) 
+![plot of chunk intervalmeanPlot](figure/intervalmeanPlot-1.png) 
 
 Interval containing the maximum mean number of steps, along with that mean reading:
 
@@ -92,7 +99,7 @@ dailysteps2 <- tapply(data2$steps,data2$date,sum,na.rm=T)
 hist(dailysteps2,col="blue1",breaks=20)
 ```
 
-![plot of chunk dailySteps2](figure/dailySteps2.png) 
+![plot of chunk dailySteps2](figure/dailySteps2-1.png) 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -117,4 +124,4 @@ plot(names(intervalmeanwd),intervalmeanwd,type="l",col="green",main= "Weekdays",
 plot(names(intervalmeanwe),intervalmeanwe,type="l",col="green",main= "Weekends", xlab="Interval", ylab="Average Steps", ylim=c(0,210))
 ```
 
-![plot of chunk weekdayVsWeekend](figure/weekdayVsWeekend.png) 
+![plot of chunk weekdayVsWeekend](figure/weekdayVsWeekend-1.png) 

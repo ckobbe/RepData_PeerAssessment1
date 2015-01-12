@@ -16,33 +16,35 @@ First we unzip, load and transform the data:
 unzip("activity.zip")
 data <- read.csv("activity.csv",colClasses="character",na.strings = "NA")
 data <- transform(data,date=factor(date),steps=as.numeric(steps),interval=factor(as.numeric(interval)))
+data_nona <- data[!is.na(data$steps),]
 ```
 
 ## What is mean total number of steps taken per day?
 
-Add steps for each day, ignoring NAs.
+Add steps for each day, stripping NAs.
 ```{r dailyTotal}
-dailysteps <- tapply(data$steps,data$date,sum,na.rm=T)
+dailysteps <- tapply(data_nona$steps,data_nona$date,sum)
+dailysteps_nona <- dailysteps[!is.na(dailysteps)]
 ```
 A histogram of these values:
 ```{r dailyTotalHistogram}
-hist(dailysteps,col="blue3",breaks=20)
+hist(dailysteps_nona,col="blue3",breaks=20)
 ```  
 
 The mean of the daily totals:
 ```{r dailyTotalMean}
-mean(dailysteps)
+mean(dailysteps_nona)
 ```
 The median of the daily totals:
 ```{r dailyTotalMedian}
-median(dailysteps)
+median(dailysteps_nona)
 ```
 
 ## What is the average daily activity pattern?
 
 Take the mean of the steps for a given 5 minute interval:
 ```{r intervalmean}
-intervalmean <- tapply(data$steps,data$interval,mean,na.rm=T)
+intervalmean <- tapply(data_nona$steps,data_nona$interval,mean)
 ```
 Plot time of day against number of steps:
 ```{r intervalmeanPlot}
