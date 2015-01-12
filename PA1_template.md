@@ -95,11 +95,29 @@ data2 <- data.frame(steps=steps2,date=data$date,interval=data$interval)
 New daily step total histogram:
 
 ```r
-dailysteps2 <- tapply(data2$steps,data2$date,sum,na.rm=T)
+dailysteps2 <- tapply(data2$steps,data2$date,sum)
 hist(dailysteps2,col="blue1",breaks=20)
 ```
 
 ![plot of chunk dailySteps2](figure/dailySteps2-1.png) 
+The new mean is:
+
+```r
+mean(dailysteps2)
+```
+
+```
+## [1] 9503.869
+```
+The new median:
+
+```r
+median(dailysteps2)
+```
+
+```
+## [1] 10395
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
